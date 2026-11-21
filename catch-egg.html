@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Catch the Egg | The Lazy Corner</title>
+<meta name="description" content="A quick little egg-catching game. Tap the moving egg and try to drop it into the basket.">
+<link rel="canonical" href="https://letscrackitt.github.io/lazyaahh/catch-egg.html">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;800&display=swap">
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(145deg,#f7f1ff,#fff8e9 58%,#eaf8f2);color:#40364f;font-family:Nunito,system-ui,sans-serif}
+header{max-width:900px;margin:auto;padding:22px;display:flex;justify-content:space-between;gap:12px}header a{color:inherit;text-decoration:none;font-weight:800}
+main{max-width:900px;margin:auto;padding:8px 20px 45px;text-align:center}h1{font:800 clamp(2.2rem,6vw,3.3rem)/1.1 'Baloo 2',sans-serif;margin:8px 0}.sub{color:#746982;margin:5px 0 16px}
+.stats{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:15px}.stat{background:#fff;border:1px solid #e7dff0;border-radius:999px;padding:8px 18px;font-weight:800}
+button{border:0;border-radius:999px;background:#594b70;color:#fff;padding:10px 19px;font:800 .95rem Nunito;cursor:pointer}
+.arena{height:min(68vh,570px);min-height:440px;position:relative;overflow:hidden;border:2px solid #d9cde6;border-radius:26px;background:linear-gradient(#e9f6ff 0%,#f8fbff 66%,#dff1dc 66%,#dff1dc 100%);box-shadow:inset 0 0 35px #fff}
+.sun{position:absolute;right:9%;top:8%;width:65px;height:65px;border-radius:50%;background:#ffe6a6;box-shadow:0 0 0 12px #ffe6a633}
+.cloud{position:absolute;top:18%;font-size:2.2rem;opacity:.55}
+.egg{position:absolute;top:25%;left:0;z-index:3;font-size:3.2rem;line-height:1;cursor:pointer;user-select:none;touch-action:manipulation;filter:drop-shadow(0 5px 4px #6d5c4930);transform:translateX(-50%);transition:top .48s cubic-bezier(.25,.7,.3,1)}
+.egg.falling{top:75%;transition:top .48s cubic-bezier(.35,.1,.7,1)}
+.basket{position:absolute;z-index:2;bottom:5%;left:50%;transform:translateX(-50%);font-size:5rem;line-height:1;filter:drop-shadow(0 6px 4px #5e654033);user-select:none;touch-action:none}
+.arena:after{content:"";position:absolute;bottom:0;left:0;right:0;height:5%;background:#b5d6a7}
+.message{min-height:28px;margin:12px 0;color:#655775;font-weight:800}.controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+@media(max-width:560px){.arena{min-height:430px;height:62vh}.egg{font-size:2.8rem}.basket{font-size:4.4rem}}
+</style></head>
+<body>
+<header><a href="index.html">← The Lazy Corner</a><a href="pop-relax.html">Pop & Relax →</a></header>
+<main><h1>Catch the Egg 🥚</h1><p class="sub">The egg zips across the sky. Move your basket, then tap the egg to drop it!</p>
+<div class="stats"><span class="stat">Caught: <b id="caught">0</b></span><span class="stat">Missed: <b id="missed">0</b></span></div>
+<div class="arena" id="arena" aria-label="Catch the moving egg in the basket">
+<div class="sun"></div><div class="cloud" style="left:13%">☁️</div><div class="cloud" style="left:65%;top:35%">☁️</div>
+<div class="egg" id="egg" role="button" tabindex="0" aria-label="Tap to drop the egg">🥚</div>
+<div class="basket" id="basket" aria-label="Basket">🧺</div>
+</div>
+<div class="message" id="message" aria-live="polite">Move the basket with your mouse or finger. Tap the egg when ready!</div>
+<div class="controls"><button id="start">Start / Restart</button></div>
+<p class="sub">Catch as many as you can. The egg moves quickly!</p></main>
+<script>
+(()=>{const arena=document.getElementById('arena'),egg=document.getElementById('egg'),basket=document.getElementById('basket'),caughtEl=document.getElementById('caught'),missedEl=document.getElementById('missed'),msg=document.getElementById('message');let x=12,dir=1,raf=0,last=0,active=true,dropping=false,caught=0,missed=0;const speed=0.42;
+function placeEgg(){egg.style.left=x+'%'}
+function moveBasket(clientX){const r=arena.getBoundingClientRect();let pct=Math.max(9,Math.min(91,(clientX-r.left)/r.width*100));basket.style.left=pct+'%'}
+arena.addEventListener('pointermove',e=>{if(e.pointerType!=='touch'||e.buttons)moveBasket(e.clientX)});arena.addEventListener('pointerdown',e=>moveBasket(e.clientX));
+function tick(t){if(!active)return;if(!last)last=t;let dt=Math.min(32,t-last);last=t;if(!dropping){x+=dir*speed*dt/10;if(x>91){x=91;dir=-1}if(x<9){x=9;dir=1}placeEgg()}raf=requestAnimationFrame(tick)}
+function sound(ok){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const a=new C(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type='sine';o.frequency.setValueAtTime(ok?660:220,a.currentTime);o.frequency.exponentialRampToValueAtTime(ok?880:150,a.currentTime+.12);g.gain.setValueAtTime(.12,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.18);o.start();o.stop(a.currentTime+.19);o.onended=()=>a.close()}catch(e){}}
+function drop(){if(!active||dropping)return;dropping=true;egg.classList.add('falling');const eggX=x;setTimeout(()=>{const br=basket.getBoundingClientRect(),ar=arena.getBoundingClientRect(),basketX=(br.left+br.width/2-ar.left)/ar.width*100;if(Math.abs(eggX-basketX)<11){caught++;caughtEl.textContent=caught;msg.textContent='Plop! Perfect catch! 🥚';sound(true)}else{missed++;missedEl.textContent=missed;msg.textContent='Oops! The egg missed. Try again!';sound(false)}egg.classList.remove('falling');dropping=false;x=9+Math.random()*82;dir=Math.random()<.5?1:-1;placeEgg()},490)}
+egg.addEventListener('click',drop);egg.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();drop()}});
+function restart(){cancelAnimationFrame(raf);caught=0;missed=0;caughtEl.textContent='0';missedEl.textContent='0';x=12;dir=1;dropping=false;active=true;last=0;egg.classList.remove('falling');placeEgg();msg.textContent='Ready! Move your basket and tap the egg.';raf=requestAnimationFrame(tick)}
+document.getElementById('start').addEventListener('click',restart);placeEgg();raf=requestAnimationFrame(tick);
+})();
+</script></body></html>
