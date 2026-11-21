@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Lazy Word Hunt | The Lazy Corner</title>
+<meta name="description" content="A delightfully difficult word hunt. Find 30 real English words hiding among 1,000 almost-believable words.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://letscrackitt.github.io/lazyaahh/word-hunt.html">
+<meta name="theme-color" content="#E9E4FA">
+<link rel="stylesheet" href="style.css">
+<style>
+.word-game{max-width:1100px;margin:0 auto;padding:42px 20px 80px}
+.word-game h1{font-size:clamp(2.2rem,7vw,3.5rem)}
+.game-intro{color:var(--muted);max-width:650px;margin:10px 0 22px}
+.game-stats{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0}
+.stat{background:var(--surface);border-radius:14px;padding:12px 18px;min-width:130px}
+.stat strong{display:block;font-size:1.5rem;line-height:1.2}
+.stat span{font-size:.82rem;color:var(--muted)}
+.game-layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(300px,.9fr);gap:18px;align-items:start}
+.game-panel{background:var(--surface);border-radius:20px;padding:18px;min-width:0}
+.panel-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:12px}
+.panel-head h2{margin:0;font-size:1.25rem}
+.panel-head small{color:var(--muted)}
+.word-bank{height:570px;overflow-y:auto;overscroll-behavior:contain;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;padding:2px 5px 2px 2px}
+.word-chip{font:400 .92rem/1.25 system-ui,sans-serif;letter-spacing:.01em;color:var(--ink);background:var(--bg);border:1px solid transparent;border-radius:8px;padding:10px 6px;min-width:0;cursor:grab;touch-action:none;user-select:none;text-align:center}
+.word-chip:hover{border-color:var(--pillow)}
+.word-chip:focus-visible,.answer-slot:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.word-chip.used{opacity:.22;pointer-events:none;text-decoration:line-through}
+.word-chip.dragging{opacity:.25}
+.answer-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:570px;overflow:auto;padding:2px}
+.answer-slot{min-height:58px;border:1px dashed #b9b1c8;border-radius:9px;background:transparent;color:var(--muted);padding:7px;text-align:left;display:flex;align-items:center;gap:8px;margin:0;font:400 .83rem system-ui,sans-serif;cursor:pointer}
+.answer-slot .slot-num{font-size:.72rem;opacity:.65;min-width:17px}
+.answer-slot .slot-word{overflow-wrap:anywhere;color:var(--ink)}
+.answer-slot.correct{background:#dff3e5;border:1px solid #55a76b;color:#176b32}
+.answer-slot.correct .slot-word{color:#176b32;font-weight:650}
+.answer-slot.wrong{background:#fbe5e5;border:1px solid #d86a6a;color:#a52828}
+.answer-slot.wrong .slot-word{color:#a52828}
+.game-note{color:var(--muted);font-size:.86rem;margin:12px 2px 0}
+.game-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}
+.game-actions button{margin:0}
+.game-actions .plain{background:var(--pillow)}
+.game-message{min-height:1.5em;color:var(--muted);font-size:.92rem;margin-top:12px}
+.drag-ghost{position:fixed;z-index:9999;pointer-events:none;padding:10px 15px;background:var(--surface);border:1px solid var(--ink);border-radius:8px;box-shadow:0 8px 24px #0002;font:400 .95rem system-ui,sans-serif;transform:translate(-50%,-50%)}
+.drop-hint{outline:2px solid var(--pillow);outline-offset:2px}
+@media(max-width:720px){.word-game{padding:32px 14px 60px}.game-layout{grid-template-columns:1fr}.word-bank{height:340px;grid-template-columns:repeat(3,minmax(0,1fr))}.answer-list{max-height:none;grid-template-columns:repeat(2,minmax(0,1fr))}.game-panel{padding:14px}}
+@media(prefers-reduced-motion:no-preference){.answer-slot{transition:background .15s,border-color .15s}.word-chip{transition:opacity .15s,border-color .15s}}
+</style>
+</head>
+<body>
+<nav class="top" aria-label="Main"><a href="index.html">The Lazy Corner</a><a href="articles.html">Articles</a><a href="word-hunt.html" aria-current="page">Word Hunt</a><a href="about.html">About</a><a href="contact.html">Contact</a></nav>
+<main class="word-game">
+  <h1>The Lazy Word Hunt</h1>
+  <p class="game-intro">One thousand words. Thirty real ones. The rest are convincing impostors. Drag a word from the bank on the left into any empty slot on the right. No hints. No obvious patterns. Just your vocabulary and a suspicious amount of scrolling.</p>
+  <div class="game-stats" aria-live="polite">
+    <div class="stat"><strong id="foundCount">0 / 30</strong><span>Real words found</span></div>
+    <div class="stat"><strong id="remainingCount">1,000</strong><span>Words in the bank</span></div>
+    <div class="stat"><strong id="wrongCount">0</strong><span>Wrong drops</span></div>
+  </div>
+  <div class="game-layout">
+    <section class="game-panel" aria-label="Word bank">
+      <div class="panel-head"><h2>Word bank</h2><small>1,000 mixed words · scroll</small></div>
+      <div class="word-bank" id="wordBank"></div>
+      <p class="game-note">Drag any word into a numbered slot. On a touchscreen, press and drag it with your finger.</p>
+    </section>
+    <section class="game-panel" aria-label="Answer slots">
+      <div class="panel-head"><h2>Answer set</h2><small>30 hidden answers</small></div>
+      <div class="answer-list" id="answerList"></div>
+      <p class="game-note">Green means you found a real word. Red means it fooled you. You can replace a red answer by dropping another word into that slot.</p>
+    </section>
+  </div>
+  <div class="game-actions">
+    <button type="button" id="checkBtn">Check my progress</button>
+    <button type="button" class="plain" id="resetBtn">Start over</button>
+  </div>
+  <p class="game-message" id="gameMessage" role="status" aria-live="polite">Ready when you are. Take your time.</p>
+  <footer><a href="privacy.html">Privacy Policy</a><a href="about.html">About</a><a href="contact.html">Contact</a><p>© 2026 The Lazy Corner</p></footer>
+</main>
+<script>
+(function(){
+  'use strict';
+  var answers = [
+    'languor','petrichor','quiescent','sonder','ephemeral','halcyon','ineffable','solivagant','ethereal','serendipity',
+    'mellifluous','gloaming','resplendent','vellichor','taciturn','pensive','euphoria','reverie','limerence','numinous',
+    'ebullient','incandescent','tranquil','elusive','idyllic','somnolent','eloquent','serene','nostalgia','apricity'
+  ];
+  var onsets=['br','cl','dr','fl','fr','gl','gr','pl','pr','sl','sm','sn','sp','st','tr','tw','v','w','bl','cr','d','m','n','sk','th','vr','z'];
+  var middles=['a','e','i','o','u','ae','ai','ea','ei','ia','io','oo','ou'];
+  var endings=['bble','dle','fren','gish','lune','mber','nish','phle','rish','sper','tive','vish','zle','nter','lith','mick','dren','flet','glen','mish','phel','rune','sque','thic','vane','wick','zick'];
+  var realSet=new Set(answers);
+  var fakeSet=new Set();
+  while(fakeSet.size<970){
+    var a=onsets[Math.floor(Math.random()*onsets.length)];
+    var b=middles[Math.floor(Math.random()*middles.length)];
+    var c=endings[Math.floor(Math.random()*endings.length)];
+    var word=a+b+c;
+    if(word.length>=5 && word.length<=10 && !realSet.has(word) && !fakeSet.has(word)) fakeSet.add(word);
+  }
+  var words=Array.from(fakeSet).concat(answers);
+  for(var i=words.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=words[i];words[i]=words[j];words[j]=tmp;}
+  var bank=document.getElementById('wordBank'), answerList=document.getElementById('answerList');
+  var foundCount=document.getElementById('foundCount'), remainingCount=document.getElementById('remainingCount'), wrongCount=document.getElementById('wrongCount');
+  var message=document.getElementById('gameMessage'), wrong=0, found=new Set(), used=new Set(), placements=new Array(30).fill(null), ghost=null, activeWord=null;
+  function makeBank(){
+    bank.innerHTML='';
+    words.forEach(function(word,index){
+      var item=document.createElement('button');
+      item.type='button';item.className='word-chip';item.textContent=word;item.draggable=true;item.dataset.word=word;item.dataset.index=index;
+      item.setAttribute('aria-label','Drag or select word '+word);
+      item.addEventListener('dragstart',function(e){activeWord=word;e.dataTransfer.setData('text/plain',word);e.dataTransfer.effectAllowed='copy';});
+      item.addEventListener('click',function(){if(used.has(word))return;activeWord=word;message.textContent='Selected “'+word+'”. Now choose an empty or red slot on the right.';});
+      item.addEventListener('pointerdown',function(e){
+        if(e.pointerType==='mouse'||used.has(word))return;
+        activeWord=word;item.classList.add('dragging');
+        ghost=document.createElement('div');ghost.className='drag-ghost';ghost.textContent=word;document.body.appendChild(ghost);moveGhost(e.clientX,e.clientY);
+        function move(ev){moveGhost(ev.clientX,ev.clientY);var target=document.elementFromPoint(ev.clientX,ev.clientY);document.querySelectorAll('.answer-slot').forEach(function(s){s.classList.toggle('drop-hint',!!(target&&s.contains(target)));});}
+        function end(ev){document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',end);item.classList.remove('dragging');var target=document.elementFromPoint(ev.clientX,ev.clientY);var slot=target&&target.closest('.answer-slot');if(slot)place(word,Number(slot.dataset.slot));if(ghost){ghost.remove();ghost=null;}document.querySelectorAll('.answer-slot').forEach(function(s){s.classList.remove('drop-hint')});}
+        document.addEventListener('pointermove',move);document.addEventListener('pointerup',end);
+      });
+      bank.appendChild(item);
+    });
+  }
+  function moveGhost(x,y){if(ghost){ghost.style.left=x+'px';ghost.style.top=y+'px';}}
+  function makeSlots(){
+    answerList.innerHTML='';
+    for(var i=0;i<30;i++){
+      var slot=document.createElement('button');slot.type='button';slot.className='answer-slot';slot.dataset.slot=i;
+      slot.innerHTML='<span class="slot-num">'+String(i+1).padStart(2,'0')+'</span><span class="slot-word">Drop a word</span>';
+      slot.addEventListener('dragover',function(e){e.preventDefault();this.classList.add('drop-hint');});
+      slot.addEventListener('dragleave',function(){this.classList.remove('drop-hint');});
+      slot.addEventListener('drop',function(e){e.preventDefault();this.classList.remove('drop-hint');var word=e.dataTransfer.getData('text/plain')||activeWord;if(word)place(word,Number(this.dataset.slot));});
+      slot.addEventListener('click',function(){if(activeWord)place(activeWord,Number(this.dataset.slot));});
+      answerList.appendChild(slot);
+    }
+  }
+  function place(word,index){
+    if(!word||index<0||index>=30||found.has(word))return;
+    if(placements[index]&&placements[index].correct)return;
+    if(used.has(word)&&!placements.some(function(p){return p&&p.word===word&&!p.correct;}))return;
+    var old=placements[index];if(old&&!old.correct){used.delete(old.word);}
+    var correct=realSet.has(word);
+    placements[index]={word:word,correct:correct};
+    if(correct){found.add(word);used.add(word);}else{wrong++;wrongCount.textContent=wrong;message.textContent='Not quite — “'+word+'” is a convincing impostor. Try another.';}
+    if(correct){message.textContent='Good eye. “'+word+'” is a real word.';}
+    renderSlots();renderBank();updateStats();
+    if(found.size===30){message.textContent='You found all 30. A truly unnecessary amount of vocabulary skill. Congratulations!';}
+  }
+  function renderSlots(){
+    Array.from(answerList.children).forEach(function(slot,i){
+      var p=placements[i];slot.classList.remove('correct','wrong');
+      var label=slot.querySelector('.slot-word');
+      if(!p){label.textContent='Drop a word';slot.disabled=false;}
+      else{label.textContent=p.word;slot.classList.add(p.correct?'correct':'wrong');slot.disabled=!!p.correct;}
+    });
+  }
+  function renderBank(){
+    bank.querySelectorAll('.word-chip').forEach(function(item){var w=item.dataset.word;item.classList.toggle('used',found.has(w));});
+  }
+  function updateStats(){foundCount.textContent=found.size+' / 30';remainingCount.textContent=(1000-found.size).toLocaleString('en-US');}
+  document.getElementById('checkBtn').addEventListener('click',function(){message.textContent=found.size===30?'All 30 found. You win!':found.size+' of 30 found. '+(30-found.size)+' still hiding in the word bank.';});
+  document.getElementById('resetBtn').addEventListener('click',function(){
+    if(!window.confirm('Start a fresh hunt? Your current answers will be cleared.'))return;
+    wrong=0;found.clear();used.clear();placements=new Array(30).fill(null);activeWord=null;
+    words=Array.from(fakeSet).concat(answers);for(var i=words.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=words[i];words[i]=words[j];words[j]=t;}
+    wrongCount.textContent='0';message.textContent='A fresh shuffle. Good luck.';makeBank();renderSlots();updateStats();
+  });
+  makeBank();makeSlots();updateStats();
+})();
+</script>
+</body>
+</html>
