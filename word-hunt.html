@@ -22,8 +22,8 @@
 .panel-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:12px}
 .panel-head h2{margin:0;font-size:1.25rem}
 .panel-head small{color:var(--muted)}
-.word-bank{height:104px;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;display:flex;flex-flow:row nowrap;align-items:center;gap:7px;padding:8px 5px 12px 2px;white-space:nowrap;scrollbar-width:thin}
-.word-chip{flex:0 0 auto;width:auto;min-width:76px;font:400 .92rem/1.25 system-ui,sans-serif;letter-spacing:.01em;color:var(--ink);background:var(--bg);border:1px solid transparent;border-radius:8px;padding:12px 10px;cursor:grab;touch-action:none;user-select:none;text-align:center}
+.word-bank{height:570px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;display:flex;flex-flow:column nowrap;align-items:stretch;gap:5px;padding:2px 5px 2px 2px;scrollbar-width:thin}
+.word-chip{flex:0 0 auto;width:100%;min-width:0;font:400 .92rem/1.25 system-ui,sans-serif;letter-spacing:.01em;color:var(--ink);background:var(--bg);border:1px solid transparent;border-radius:8px;padding:9px 12px;cursor:grab;touch-action:none;user-select:none;text-align:left}
 .word-chip:hover{border-color:var(--pillow)}
 .word-chip:focus-visible,.answer-slot:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .word-chip.used{opacity:.22;pointer-events:none;text-decoration:line-through}
@@ -43,7 +43,7 @@
 .game-message{min-height:1.5em;color:var(--muted);font-size:.92rem;margin-top:12px}
 .drag-ghost{position:fixed;z-index:9999;pointer-events:none;padding:10px 15px;background:var(--surface);border:1px solid var(--ink);border-radius:8px;box-shadow:0 8px 24px #0002;font:400 .95rem system-ui,sans-serif;transform:translate(-50%,-50%)}
 .drop-hint{outline:3px solid var(--pillow);outline-offset:3px;background:#eee9fa}
-@media(max-width:720px){.word-game{padding:32px 14px 60px}.game-layout{grid-template-columns:1fr}.word-bank{height:96px;display:flex;flex-flow:row nowrap;overflow-x:auto;overflow-y:hidden}.answer-list{max-height:none;grid-template-columns:repeat(2,minmax(0,1fr))}.game-panel{padding:14px}}
+@media(max-width:720px){.word-game{padding:32px 14px 60px}.game-layout{grid-template-columns:1fr}.word-bank{height:340px;display:flex;flex-flow:column nowrap;overflow-y:auto;overflow-x:hidden}.answer-list{max-height:none;grid-template-columns:repeat(2,minmax(0,1fr))}.game-panel{padding:14px}}
 @media(prefers-reduced-motion:no-preference){.answer-slot{transition:background .15s,border-color .15s}.word-chip{transition:opacity .15s,border-color .15s}}
 </style>
 </head>
@@ -59,9 +59,9 @@
   </div>
   <div class="game-layout">
     <section class="game-panel" aria-label="Word bank">
-      <div class="panel-head"><h2>Word bank</h2><small>1,000 mixed words · swipe sideways</small></div>
+      <div class="panel-head"><h2>Word bank</h2><small>1,000 mixed words · scroll down</small></div>
       <div class="word-bank" id="wordBank"></div>
-      <p class="game-note">A single long line of words — scroll sideways to explore it. Drag any word into the answer area.</p>
+      <p class="game-note">One long vertical list — scroll down to explore it. Drag any word into the answer area.</p>
     </section>
     <section class="game-panel" aria-label="Answer slots">
       <div class="panel-head"><h2>Answer set</h2><small>30 hidden answers</small></div>
