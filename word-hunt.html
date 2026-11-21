@@ -30,13 +30,16 @@
 .word-chip:focus-visible,.answer-slot:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 
 .word-chip.dragging{opacity:.25}
-.answer-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:570px;overflow:auto;padding:2px}
-.answer-slot{min-height:58px;border:1px dashed #b9b1c8;border-radius:9px;background:transparent;color:var(--muted);padding:7px;text-align:left;display:flex;align-items:center;gap:8px;margin:0;font:400 .83rem system-ui,sans-serif;cursor:pointer}
+.glass-pot{position:relative;height:610px;max-width:100%;margin:22px auto 8px;padding:34px 16px 22px;border:3px solid rgba(151,177,194,.72);border-top-width:5px;border-radius:24% 24% 38% 38% / 9% 9% 13% 13%;background:linear-gradient(115deg,rgba(255,255,255,.72),rgba(208,230,241,.38) 35%,rgba(255,255,255,.58) 62%,rgba(190,218,232,.35));box-shadow:inset 10px 0 18px rgba(255,255,255,.75),inset -9px 0 18px rgba(130,165,184,.13),0 12px 22px rgba(66,87,112,.12);backdrop-filter:blur(5px);overflow:hidden}
+.glass-pot:before{content:"";position:absolute;left:12%;right:12%;top:-10px;height:28px;border:3px solid rgba(151,177,194,.78);border-radius:50%;background:linear-gradient(#fff,rgba(215,234,243,.6));box-shadow:0 3px 7px rgba(60,90,110,.12)}
+.glass-pot:after{content:"";position:absolute;left:9px;top:48px;bottom:48px;width:7px;border-radius:50%;background:rgba(255,255,255,.58);filter:blur(2px);pointer-events:none}
+.answer-list{position:relative;z-index:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;height:100%;max-height:none;overflow:auto;padding:4px 8px 12px;scrollbar-width:thin}
+.answer-slot{min-height:58px;border:1px dashed rgba(123,151,169,.62);border-radius:12px;background:rgba(255,255,255,.48);color:var(--muted);padding:7px;text-align:left;display:flex;align-items:center;gap:8px;margin:0;font:400 .83rem system-ui,sans-serif;cursor:pointer}
 .answer-slot .slot-num{font-size:.72rem;opacity:.65;min-width:17px}
 .answer-slot .slot-word{overflow-wrap:anywhere;color:var(--ink)}
-.answer-slot.correct{background:#dff3e5;border:1px solid #55a76b;color:#176b32}
+.answer-slot.correct{background:rgba(205,242,215,.88);border:1px solid #55a76b;color:#176b32}
 .answer-slot.correct .slot-word{color:#176b32;font-weight:650}
-.answer-slot.wrong{background:#fbe5e5;border:1px solid #d86a6a;color:#a52828}
+.answer-slot.wrong{background:rgba(251,220,220,.9);border:1px solid #d86a6a;color:#a52828}
 .answer-slot.wrong .slot-word{color:#a52828}
 .game-note{color:var(--muted);font-size:.86rem;margin:12px 2px 0}
 .game-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}
@@ -45,7 +48,7 @@
 .game-message{min-height:1.5em;color:var(--muted);font-size:.92rem;margin-top:12px}
 .drag-ghost{position:fixed;z-index:9999;pointer-events:none;padding:10px 15px;background:var(--surface);border:1px solid var(--ink);border-radius:8px;box-shadow:0 8px 24px #0002;font:400 .95rem system-ui,sans-serif;transform:translate(-50%,-50%)}
 
-@media(max-width:720px){.word-game{padding:32px 14px 60px}.game-layout{grid-template-columns:1fr}.word-bank{height:340px;display:flex;flex-flow:column nowrap;overflow-y:auto;overflow-x:hidden}.answer-list{max-height:none;grid-template-columns:repeat(2,minmax(0,1fr))}.game-panel{padding:14px}}
+@media(max-width:720px){.word-game{padding:32px 14px 60px}.game-layout{grid-template-columns:1fr}.word-bank{height:340px;display:flex;flex-flow:column nowrap;overflow-y:auto;overflow-x:hidden}.glass-pot{height:610px;max-width:430px}.answer-list{height:100%;max-height:none;grid-template-columns:repeat(2,minmax(0,1fr))}.game-panel{padding:14px}}
 @media(prefers-reduced-motion:no-preference){.answer-slot{transition:background .15s,border-color .15s}.word-chip{transition:opacity .15s,border-color .15s}}
 </style>
 </head>
@@ -66,8 +69,8 @@
       <p class="game-note">Drag the right words into the answer box.</p>
     </section>
     <section class="game-panel" aria-label="Answer slots">
-      <div class="panel-head"><h2>Answer set</h2><small>30 hidden answers</small></div>
-      <div class="answer-list" id="answerList"></div>
+      <div class="panel-head"><h2>Glass word pot</h2><small>Collect all 30 real words</small></div>
+      <div class="glass-pot" aria-label="Glass pot for collecting the 30 meaningful words"><div class="answer-list" id="answerList"></div></div>
       <p class="game-note">Green means you found a real word. Red means it fooled you. Every dropped word lands in a random spot. Wrong guesses can be replaced.</p>
     </section>
   </div>
