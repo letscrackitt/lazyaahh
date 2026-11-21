@@ -59,7 +59,7 @@
   <div class="game-stats" aria-live="polite">
     <div class="stat"><strong id="foundCount">0 / 30</strong><span>Real words found</span></div>
     
-    <div class="stat"><strong id="wrongCount">0</strong><span>Wrong drops</span></div>
+    <div class="stat"><strong id="attemptCount">0 / 60</strong><span>Attempts left</span></div>
   </div>
   <div class="game-layout">
     <section class="game-panel" aria-label="Word bank">
@@ -104,7 +104,7 @@
   for(var i=words.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=words[i];words[i]=words[j];words[j]=tmp;}
   var bank=document.getElementById('wordBank'), answerList=document.getElementById('answerList'), glassPot=document.getElementById('glassPot');
   var foundCount=document.getElementById('foundCount'), jarCount=document.getElementById('jarCount'), wrongCount=document.getElementById('wrongCount');
-  var message=document.getElementById('gameMessage'), wrong=0, found=new Set(), used=new Set(), ghost=null, activeWord=null, audioCtx=null;
+  var message=document.getElementById('gameMessage'), wrong=0, attempts=0, found=new Set(), used=new Set(), ghost=null, activeWord=null, audioCtx=null;
   function makeBank(){
     bank.innerHTML='';
     words.forEach(function(word,index){
@@ -112,7 +112,7 @@
       item.type='button';item.className='word-chip';item.textContent=word;item.draggable=true;item.dataset.word=word;item.dataset.index=index;
       item.setAttribute('aria-label','Drag or select word '+word);
       item.addEventListener('dragstart',function(e){if(used.has(word)){e.preventDefault();return;}unlockAudio();playDragSound();activeWord=word;e.dataTransfer.setData('text/plain',word);e.dataTransfer.effectAllowed='copy';});
-      item.addEventListener('click',function(){if(used.has(word))return;activeWord=word;message.textContent='Selected “'+word+'”. Now choose an empty or red slot on the right.';});
+      item.addEventListener('click',function(){if(used.has(word))return;activeWord=word;message.textContent='Selected “'+word+'”. Drop it into the glass jar.';});
       item.addEventListener('pointerdown',function(e){
         if(used.has(word))return;unlockAudio();if(e.pointerType==='mouse')return;playDragSound();
         activeWord=word;item.classList.add('dragging');
@@ -132,8 +132,8 @@
   function playDragSound(){
     try{unlockAudio();if(!audioCtx)return;var now=audioCtx.currentTime,osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
       osc.type='sine';osc.frequency.setValueAtTime(620,now);osc.frequency.exponentialRampToValueAtTime(880,now+.09);
-      gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.035,now+.012);gain.gain.exponentialRampToValueAtTime(.0001,now+.12);
-      osc.connect(gain);gain.connect(audioCtx.destination);osc.start(now);osc.stop(now+.13);
+      gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.14,now+.012);gain.gain.exponentialRampToValueAtTime(.0001,now+.18);
+      osc.connect(gain);gain.connect(audioCtx.destination);osc.start(now);osc.stop(now+.19);
     }catch(e){}
   }
   function playDropSound(correct){
@@ -148,7 +148,7 @@
           var osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
           osc.type='sine';osc.frequency.value=freq;
           gain.gain.setValueAtTime(.0001,now+i*.075);
-          gain.gain.exponentialRampToValueAtTime(.11,now+i*.075+.018);
+          gain.gain.exponentialRampToValueAtTime(.28,now+i*.075+.018);
           gain.gain.exponentialRampToValueAtTime(.0001,now+i*.075+.42);
           osc.connect(gain);gain.connect(audioCtx.destination);
           osc.start(now+i*.075);osc.stop(now+i*.075+.44);
@@ -156,13 +156,15 @@
       }else{
         var osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.type='sawtooth';
         osc.frequency.setValueAtTime(190,now);osc.frequency.exponentialRampToValueAtTime(65,now+.32);
-        gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.16,now+.015);gain.gain.exponentialRampToValueAtTime(.0001,now+.38);
+        gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.34,now+.015);gain.gain.exponentialRampToValueAtTime(.0001,now+.38);
         osc.connect(gain);gain.connect(audioCtx.destination);osc.start(now);osc.stop(now+.4);
       }
     }catch(e){}
   }
   function place(word){
     if(!word||found.has(word))return;
+    if(attempts>=60){message.textContent='That was your 60th attempt! Start over to play again.';return;}
+    attempts++;document.getElementById('attemptCount').textContent=attempts+' / 60';
     var correct=realSet.has(word);
     if(correct){
       found.add(word);used.add(word);
@@ -176,15 +178,15 @@
       if(item){item.classList.remove('bounce-back');void item.offsetWidth;item.classList.add('bounce-back');}
     }
     playDropSound(correct);updateStats();
-    if(found.size===30)message.textContent='You collected all 30! The jar is full. Lovely work.';
+    if(found.size===30)message.textContent='You collected all 30! The jar is full. Lovely work.';else if(attempts===60)message.textContent='That was your 60th attempt! You found '+found.size+' of 30. Start over to try again.';
   }
   function updateStats(){foundCount.textContent=found.size+' / 30';jarCount.textContent=found.size+' / 30';}
   document.getElementById('checkBtn').addEventListener('click',function(){message.textContent=found.size===30?'You collected all 30! The jar is full.':'The jar has '+found.size+' of 30 real words. Keep hunting!';});
   document.getElementById('resetBtn').addEventListener('click',function(){
     if(!window.confirm('Start a fresh hunt? Your current answers will be cleared.'))return;
-    wrong=0;found.clear();used.clear();activeWord=null;
+    wrong=0;attempts=0;found.clear();used.clear();activeWord=null;
     words=Array.from(fakeSet).concat(answers);for(var i=words.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=words[i];words[i]=words[j];words[j]=t;}
-    wrongCount.textContent='0';message.textContent='A fresh shuffle. Good luck.';makeBank();makeSlots();updateStats();
+    wrongCount.textContent='0';document.getElementById('attemptCount').textContent='0 / 60';message.textContent='A fresh shuffle. Good luck.';makeBank();makeSlots();updateStats();
   });
   glassPot.addEventListener('dragover',function(e){e.preventDefault();});
   glassPot.addEventListener('drop',function(e){e.preventDefault();var word=e.dataTransfer.getData('text/plain')||activeWord;if(word)place(word);activeWord=null;});
