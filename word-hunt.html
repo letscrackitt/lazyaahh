@@ -24,8 +24,8 @@
 .panel-head small{color:var(--muted)}
 .word-game,.word-game *{-webkit-user-select:none;user-select:none}
 .word-game ::selection{background:transparent;color:inherit}
-.word-bank{height:570px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;display:flex;flex-flow:column nowrap;align-items:stretch;gap:5px;padding:8px;scrollbar-width:thin;background:var(--bg);border:1px solid #d8d1e7;border-radius:12px}
-.word-chip{flex:0 0 auto;width:100%;min-width:0;font:400 .92rem/1.25 system-ui,sans-serif;letter-spacing:.01em;color:var(--ink);background:transparent;border:0;border-bottom:1px solid #ded9e8;border-radius:0;padding:9px 10px;cursor:grab;touch-action:none;user-select:none;text-align:left}
+.word-bank{height:570px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;display:flex;flex-flow:column nowrap;align-items:stretch;gap:5px;padding:8px;scrollbar-width:thin;background:var(--surface);border:1px solid #aaa1b8;border-radius:4px;box-shadow:inset 0 0 0 1px #eeeaf3}
+.word-chip{flex:0 0 auto;width:100%;min-width:0;font:400 .92rem/1.25 system-ui,sans-serif;letter-spacing:.01em;color:var(--ink);background:transparent;border:0;border-bottom:1px solid #eeeaf3;border-radius:0;padding:9px 10px;cursor:grab;touch-action:none;user-select:none;text-align:left}
 
 .word-chip:focus-visible,.answer-slot:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 
@@ -61,9 +61,9 @@
   </div>
   <div class="game-layout">
     <section class="game-panel" aria-label="Word bank">
-      <div class="panel-head"><h2>Word bank</h2><small>1,000 mixed words · scroll down</small></div>
+      <div class="panel-head"><h2>Word bank</h2></div>
       <div class="word-bank" id="wordBank"></div>
-      <p class="game-note">One long vertical list — scroll down to explore it. Drag any word into the answer area.</p>
+      <p class="game-note">Drag the right words into the answer box.</p>
     </section>
     <section class="game-panel" aria-label="Answer slots">
       <div class="panel-head"><h2>Answer set</h2><small>30 hidden answers</small></div>
