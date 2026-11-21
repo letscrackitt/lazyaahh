@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Lazy Corner: a website for doing nothing</title>
+<meta name="description" content="A free website for being lazy: a do-nothing timer, nap mode, an excuse generator and honest guides to resting well.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="top" aria-label="Main"><a href="index.html">The Lazy Corner</a><a href="articles.html">Articles</a><a href="about.html">About</a><a href="contact.html">Contact</a></nav>
+<main>
+  <h1>Do nothing. We’ll wait.</h1>
+  <p class="lead">The only website that rewards you for not touching it.</p>
+
+  <div class="couch" aria-live="off">
+    <div class="timer" id="timer">00:00</div>
+    <p class="status" id="status">Stay still. Don’t move the mouse or press anything.</p>
+    <p class="best">Longest laze: <span id="best">00:00</span></p>
+    <button id="napBtn" type="button">Nap mode</button>
+  </div>
+
+  <section>
+    <h2>Need an excuse?</h2>
+    <div class="card">
+      <p class="excuse" id="excuse">Press the button. Skip the thinking.</p>
+      <button id="exBtn" type="button">Give me an excuse</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Things I’ll do tomorrow</h2>
+    <div class="card tmr">
+      <div class="n" id="tmrN">0</div>
+      <div>
+        <div>tasks postponed</div>
+        <button id="tmrBtn" type="button">I’ll do it tomorrow</button>
+      </div>
+    </div>
+  </section>
+
+  <section><h2>Latest guides</h2><div class="list"><a href="how-to-take-a-power-nap.html"><b>How to take a power nap that works</b><span>Timing, setup and what to avoid.</span></a><a href="lazy-productivity.html"><b>Getting more done while doing less</b><span>Five habits for people who hate hustle culture.</span></a><a href="why-rest-matters.html"><b>Why doing nothing is good for you</b><span>What rest actually does for your day.</span></a></div></section>
+
+  <footer><a href="privacy.html">Privacy Policy</a><a href="about.html">About</a><a href="contact.html">Contact</a><p>© 2026 The Lazy Corner</p></footer>
+</main>
+
+<div class="nap" id="nap" role="dialog" aria-label="Nap mode">
+  <div class="z" aria-hidden="true"><b>z z z</b></div>
+  <div>Shh. Tap or press any key to wake up.</div>
+</div>
+
+<script>
+(function(){
+  var timerEl=document.getElementById('timer'), statusEl=document.getElementById('status'),
+      bestEl=document.getElementById('best'), nap=document.getElementById('nap');
+  var last=Date.now(), best=0, lastX=null, lastY=null, napping=false;
+  try{best=parseInt(localStorage.getItem('lazyBest')||'0',10)||0}catch(e){}
+  function fmt(s){var m=Math.floor(s/60),r=s%60;return (m<10?'0':'')+m+':'+(r<10?'0':'')+r}
+  bestEl.textContent=fmt(best);
+  var msgs=[[0,'Stay still. Don’t move the mouse or press anything.'],[10,'Nice. You’re doing great at nothing.'],
+    [30,'Professional-level laziness.'],[60,'One whole minute. Legendary.'],[120,'You’ve earned a snack. Do not get it.']];
+  function reset(){
+    var secs=Math.floor((Date.now()-last)/1000);
+    if(secs>best){best=secs;bestEl.textContent=fmt(best);try{localStorage.setItem('lazyBest',String(best))}catch(e){}
+      if(secs>=5)statusEl.textContent='New record. Ugh, so much effort.'}
+    else if(secs>=5)statusEl.textContent='You moved. Back to the start.';
+    last=Date.now();
+    if(napping){napping=false;nap.classList.remove('on')}
+  }
+  function tick(){
+    var s=Math.floor((Date.now()-last)/1000);
+    timerEl.textContent=fmt(s);
+    for(var i=msgs.length-1;i>=0;i--){if(s>=msgs[i][0]&&s>0){statusEl.textContent=msgs[i][1];break}}
+  }
+  setInterval(tick,500);
+  document.addEventListener('mousemove',function(e){
+    if(lastX===null){lastX=e.clientX;lastY=e.clientY;return}
+    if(Math.abs(e.clientX-lastX)+Math.abs(e.clientY-lastY)>12){reset()}
+    lastX=e.clientX;lastY=e.clientY;
+  });
+  ['keydown','touchstart','scroll','wheel'].forEach(function(ev){document.addEventListener(ev,reset,{passive:true})});
+  document.addEventListener('click',function(e){
+    if(napping){reset();return}
+    if(e.target.closest('button')){last=Date.now();return}
+    reset();
+  });
+
+  document.getElementById('napBtn').addEventListener('click',function(e){
+    e.stopPropagation();last=Date.now();napping=true;nap.classList.add('on');
+  });
+
+  var excuses=['I would, but my couch has a very strong gravitational pull.','My to-do list and I are taking some time apart.',
+    'The weather is doing that thing again.','I’m saving my energy for something important. I haven’t decided what.',
+    'I’m currently in a thinking phase. It might last until Thursday.','Mercury is doing something. I looked it up. Nobody could explain.',
+    'I tried, but the thought of it was already exhausting.','My battery is at 3% and I’m not charging it.',
+    'It’s technically not a deadline until someone reminds me twice.','I’d love to, but I just sat down.',
+    'That sounds like a future me problem.','I’m in a very important staring-at-the-ceiling meeting.'];
+  var exEl=document.getElementById('excuse'), prev=-1;
+  document.getElementById('exBtn').addEventListener('click',function(){
+    var i;do{i=Math.floor(Math.random()*excuses.length)}while(i===prev);
+    prev=i;exEl.textContent=excuses[i];
+  });
+
+  var tmr=0, tmrEl=document.getElementById('tmrN');
+  document.getElementById('tmrBtn').addEventListener('click',function(){tmr++;tmrEl.textContent=tmr});
+})();
+</script>
+</body>
+</html>
