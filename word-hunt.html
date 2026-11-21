@@ -22,11 +22,13 @@
 .panel-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:12px}
 .panel-head h2{margin:0;font-size:1.25rem}
 .panel-head small{color:var(--muted)}
-.word-bank{height:570px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;display:flex;flex-flow:column nowrap;align-items:stretch;gap:5px;padding:2px 5px 2px 2px;scrollbar-width:thin}
-.word-chip{flex:0 0 auto;width:100%;min-width:0;font:400 .92rem/1.25 system-ui,sans-serif;letter-spacing:.01em;color:var(--ink);background:var(--bg);border:1px solid transparent;border-radius:8px;padding:9px 12px;cursor:grab;touch-action:none;user-select:none;text-align:left}
-.word-chip:hover{border-color:var(--pillow)}
+.word-game,.word-game *{-webkit-user-select:none;user-select:none}
+.word-game ::selection{background:transparent;color:inherit}
+.word-bank{height:570px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;display:flex;flex-flow:column nowrap;align-items:stretch;gap:5px;padding:8px;scrollbar-width:thin;background:var(--bg);border:1px solid #d8d1e7;border-radius:12px}
+.word-chip{flex:0 0 auto;width:100%;min-width:0;font:400 .92rem/1.25 system-ui,sans-serif;letter-spacing:.01em;color:var(--ink);background:transparent;border:0;border-bottom:1px solid #ded9e8;border-radius:0;padding:9px 10px;cursor:grab;touch-action:none;user-select:none;text-align:left}
+
 .word-chip:focus-visible,.answer-slot:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
-.word-chip.used{opacity:.22;pointer-events:none;text-decoration:line-through}
+
 .word-chip.dragging{opacity:.25}
 .answer-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:570px;overflow:auto;padding:2px}
 .answer-slot{min-height:58px;border:1px dashed #b9b1c8;border-radius:9px;background:transparent;color:var(--muted);padding:7px;text-align:left;display:flex;align-items:center;gap:8px;margin:0;font:400 .83rem system-ui,sans-serif;cursor:pointer}
@@ -42,7 +44,7 @@
 .game-actions .plain{background:var(--pillow)}
 .game-message{min-height:1.5em;color:var(--muted);font-size:.92rem;margin-top:12px}
 .drag-ghost{position:fixed;z-index:9999;pointer-events:none;padding:10px 15px;background:var(--surface);border:1px solid var(--ink);border-radius:8px;box-shadow:0 8px 24px #0002;font:400 .95rem system-ui,sans-serif;transform:translate(-50%,-50%)}
-.drop-hint{outline:3px solid var(--pillow);outline-offset:3px;background:#eee9fa}
+
 @media(max-width:720px){.word-game{padding:32px 14px 60px}.game-layout{grid-template-columns:1fr}.word-bank{height:340px;display:flex;flex-flow:column nowrap;overflow-y:auto;overflow-x:hidden}.answer-list{max-height:none;grid-template-columns:repeat(2,minmax(0,1fr))}.game-panel{padding:14px}}
 @media(prefers-reduced-motion:no-preference){.answer-slot{transition:background .15s,border-color .15s}.word-chip{transition:opacity .15s,border-color .15s}}
 </style>
@@ -107,14 +109,14 @@
       var item=document.createElement('button');
       item.type='button';item.className='word-chip';item.textContent=word;item.draggable=true;item.dataset.word=word;item.dataset.index=index;
       item.setAttribute('aria-label','Drag or select word '+word);
-      item.addEventListener('dragstart',function(e){activeWord=word;e.dataTransfer.setData('text/plain',word);e.dataTransfer.effectAllowed='copy';});
+      item.addEventListener('dragstart',function(e){if(used.has(word)){e.preventDefault();return;}unlockAudio();playDragSound();activeWord=word;e.dataTransfer.setData('text/plain',word);e.dataTransfer.effectAllowed='copy';});
       item.addEventListener('click',function(){if(used.has(word))return;activeWord=word;message.textContent='Selected “'+word+'”. Now choose an empty or red slot on the right.';});
       item.addEventListener('pointerdown',function(e){
-        if(e.pointerType==='mouse'||used.has(word))return;
+        if(used.has(word))return;unlockAudio();if(e.pointerType==='mouse')return;playDragSound();
         activeWord=word;item.classList.add('dragging');
         ghost=document.createElement('div');ghost.className='drag-ghost';ghost.textContent=word;document.body.appendChild(ghost);moveGhost(e.clientX,e.clientY);
-        function move(ev){moveGhost(ev.clientX,ev.clientY);var target=document.elementFromPoint(ev.clientX,ev.clientY);answerList.classList.toggle('drop-hint',!!(target&&answerList.contains(target)));}
-        function end(ev){document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',end);item.classList.remove('dragging');var target=document.elementFromPoint(ev.clientX,ev.clientY);if(target&&answerList.contains(target))place(word);if(ghost){ghost.remove();ghost=null;}answerList.classList.remove('drop-hint');}
+        function move(ev){moveGhost(ev.clientX,ev.clientY);}
+        function end(ev){document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',end);item.classList.remove('dragging');var target=document.elementFromPoint(ev.clientX,ev.clientY);if(target&&answerList.contains(target))place(word);if(ghost){ghost.remove();ghost=null;}}
         document.addEventListener('pointermove',move);document.addEventListener('pointerup',end);
       });
       bank.appendChild(item);
@@ -128,6 +130,16 @@
       slot.innerHTML='<span class="slot-num">'+String(i+1).padStart(2,'0')+'</span><span class="slot-word">Waiting for a word</span>';
       answerList.appendChild(slot);
     }
+  }
+  function unlockAudio(){
+    try{var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;if(!audioCtx)audioCtx=new AC();if(audioCtx.state==='suspended')audioCtx.resume();}catch(e){}
+  }
+  function playDragSound(){
+    try{unlockAudio();if(!audioCtx)return;var now=audioCtx.currentTime,osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
+      osc.type='sine';osc.frequency.setValueAtTime(620,now);osc.frequency.exponentialRampToValueAtTime(880,now+.09);
+      gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.035,now+.012);gain.gain.exponentialRampToValueAtTime(.0001,now+.12);
+      osc.connect(gain);gain.connect(audioCtx.destination);osc.start(now);osc.stop(now+.13);
+    }catch(e){}
   }
   function playDropSound(correct){
     try{
@@ -196,9 +208,7 @@
       else{label.textContent=p.word;slot.classList.add(p.correct?'correct':'wrong');slot.disabled=false;}
     });
   }
-  function renderBank(){
-    bank.querySelectorAll('.word-chip').forEach(function(item){var w=item.dataset.word;item.classList.toggle('used',used.has(w));});
-  }
+  function renderBank(){ /* Keep every word visible so the bank never gives away a used answer. */ }
   function updateStats(){foundCount.textContent=found.size+' / 30';remainingCount.textContent=(1000-found.size).toLocaleString('en-US');}
   document.getElementById('checkBtn').addEventListener('click',function(){message.textContent=found.size===30?'All 30 found. You win!':found.size+' of 30 found. '+(30-found.size)+' still hiding in the word bank.';});
   document.getElementById('resetBtn').addEventListener('click',function(){
@@ -207,9 +217,8 @@
     words=Array.from(fakeSet).concat(answers);for(var i=words.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=words[i];words[i]=words[j];words[j]=t;}
     wrongCount.textContent='0';message.textContent='A fresh shuffle. Good luck.';makeBank();renderSlots();updateStats();
   });
-  answerList.addEventListener('dragover',function(e){e.preventDefault();answerList.classList.add('drop-hint');});
-  answerList.addEventListener('dragleave',function(e){if(!answerList.contains(e.relatedTarget))answerList.classList.remove('drop-hint');});
-  answerList.addEventListener('drop',function(e){e.preventDefault();answerList.classList.remove('drop-hint');var word=e.dataTransfer.getData('text/plain')||activeWord;if(word)place(word);});
+  answerList.addEventListener('dragover',function(e){e.preventDefault();});
+  answerList.addEventListener('drop',function(e){e.preventDefault();var word=e.dataTransfer.getData('text/plain')||activeWord;if(word)place(word);});
   answerList.addEventListener('click',function(){if(activeWord){place(activeWord);activeWord=null;}});
   makeBank();makeSlots();updateStats();
 })();
