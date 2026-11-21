@@ -26,6 +26,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta name="twitter:description" content="A free website for being lazy: a do-nothing timer, nap mode, an excuse generator and honest guides to resting well.">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600&display=swap">
 <link rel="stylesheet" href="style.css">
+<style>
+.lazy-game-float{position:fixed;right:18px;top:42%;transform:translateY(-50%);z-index:15;width:205px;padding:17px;background:var(--surface);border:2px solid var(--pillow);border-radius:20px;box-shadow:0 8px 28px #30204418;color:var(--ink)}
+.lazy-game-float .lazy-game-kicker{display:block;font-size:.68rem;letter-spacing:.12em;font-weight:800;color:var(--muted)}
+.lazy-game-float strong{display:block;font:800 1.2rem/1.2 "Baloo 2",system-ui,sans-serif;margin:5px 0}
+.lazy-game-float p{font-size:.86rem;line-height:1.4;margin:7px 0 12px;color:var(--muted)}
+.lazy-game-float a{display:block;text-align:center;text-decoration:none;background:var(--butter);color:var(--ink);font-weight:800;border-radius:999px;padding:9px 10px;font-size:.9rem}
+.lazy-game-float a:hover{filter:brightness(.96)}
+@media(max-width:1050px){.lazy-game-float{top:auto;right:12px;bottom:12px;transform:none;width:auto;max-width:calc(100vw - 24px);display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:999px}.lazy-game-float .lazy-game-kicker,.lazy-game-float p{display:none}.lazy-game-float strong{font-size:1rem;margin:0;white-space:nowrap}.lazy-game-float a{padding:8px 13px;white-space:nowrap}}
+</style>
 
 <script type="application/ld+json">
 {
@@ -74,10 +83,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </div>
   </section>
 
-  <section class="lazy-game-promo"><h2>🎮 A Lazy Game to Pass the Time</h2><div class="card"><p>Got a minute to waste? Find 30 real words hiding among 1,000 almost-believable impostors. No timer, no pressure — just drag, drop and relax.</p><a href="word-hunt.html"><button type="button">Play the Lazy Word Hunt</button></a></div></section>\n\n  <section><h2>Latest guides</h2><div class="list"><a href="how-to-take-a-power-nap.html"><b>How to take a power nap that works</b><span>Timing, setup and what to avoid.</span></a><a href="lazy-productivity.html"><b>Getting more done while doing less</b><span>Five habits for people who hate hustle culture.</span></a><a href="why-rest-matters.html"><b>Why doing nothing is good for you</b><span>What rest actually does for your day.</span></a></div></section>
+    <section><h2>Latest guides</h2><div class="list"><a href="how-to-take-a-power-nap.html"><b>How to take a power nap that works</b><span>Timing, setup and what to avoid.</span></a><a href="lazy-productivity.html"><b>Getting more done while doing less</b><span>Five habits for people who hate hustle culture.</span></a><a href="why-rest-matters.html"><b>Why doing nothing is good for you</b><span>What rest actually does for your day.</span></a></div></section>
 
   <footer><a href="privacy.html">Privacy Policy</a><a href="about.html">About</a><a href="contact.html">Contact</a><p>© 2026 The Lazy Corner</p></footer>
 </main>
+
+
+<aside class="lazy-game-float" aria-label="The Lazy Game">
+  <span class="lazy-game-kicker">A LITTLE BREAK?</span>
+  <strong>🎮 The Lazy Game</strong>
+  <p>Find 30 real words hiding among 1,000 impostors.</p>
+  <a href="word-hunt.html">Play Word Hunt <span aria-hidden="true">→</span></a>
+</aside>
 
 <div class="nap" id="nap" role="dialog" aria-label="Nap mode">
   <div class="z" aria-hidden="true"><b>z z z</b></div>
