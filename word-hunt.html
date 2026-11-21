@@ -103,7 +103,7 @@
   var words=Array.from(fakeSet).concat(answers);
   for(var i=words.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=words[i];words[i]=words[j];words[j]=tmp;}
   var bank=document.getElementById('wordBank'), answerList=document.getElementById('answerList'), glassPot=document.getElementById('glassPot');
-  var foundCount=document.getElementById('foundCount'), jarCount=document.getElementById('jarCount'), wrongCount=document.getElementById('wrongCount');
+  var foundCount=document.getElementById('foundCount'), jarCount=document.getElementById('jarCount');
   var message=document.getElementById('gameMessage'), wrong=0, attempts=0, found=new Set(), used=new Set(), ghost=null, activeWord=null, audioCtx=null;
   function makeBank(){
     bank.innerHTML='';
@@ -172,7 +172,7 @@
       answerList.appendChild(chip);
       message.textContent='Lovely! “'+word+'” dropped into the jar.';
     }else{
-      wrong++;wrongCount.textContent=wrong;
+      wrong++;
       message.textContent='BZZT! “'+word+'” is not one of the hidden words. Back to the list!';
       var item=Array.from(bank.querySelectorAll('.word-chip')).find(function(el){return el.dataset.word===word;});
       if(item){item.classList.remove('bounce-back');void item.offsetWidth;item.classList.add('bounce-back');}
@@ -186,7 +186,7 @@
     if(!window.confirm('Start a fresh hunt? Your current answers will be cleared.'))return;
     wrong=0;attempts=0;found.clear();used.clear();activeWord=null;
     words=Array.from(fakeSet).concat(answers);for(var i=words.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=words[i];words[i]=words[j];words[j]=t;}
-    wrongCount.textContent='0';document.getElementById('attemptCount').textContent='0 / 60';message.textContent='A fresh shuffle. Good luck.';makeBank();makeSlots();updateStats();
+    document.getElementById('attemptCount').textContent='0 / 60';message.textContent='A fresh shuffle. Good luck.';makeBank();makeSlots();updateStats();
   });
   glassPot.addEventListener('dragover',function(e){e.preventDefault();});
   glassPot.addEventListener('drop',function(e){e.preventDefault();var word=e.dataTransfer.getData('text/plain')||activeWord;if(word)place(word);activeWord=null;});
