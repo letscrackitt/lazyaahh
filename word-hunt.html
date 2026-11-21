@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Lazy Word Hunt | The Lazy Corner</title>
-<meta name="description" content="A delightfully difficult word hunt. Find 30 real English words hiding among 1,000 almost-believable words.">
+<meta name="description" content="A delightfully difficult word hunt. Find 30 real English words hiding among a jumble of almost-believable impostors.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://letscrackitt.github.io/lazyaahh/word-hunt.html">
 <meta name="theme-color" content="#E9E4FA">
@@ -24,23 +24,21 @@
 .panel-head small{color:var(--muted)}
 .word-game,.word-game *{-webkit-user-select:none;user-select:none}
 .word-game ::selection{background:transparent;color:inherit}
-.word-bank{height:570px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;display:flex;flex-flow:column nowrap;align-items:stretch;gap:5px;padding:8px;scrollbar-width:thin;background:var(--surface);border:1px solid #aaa1b8;border-radius:4px;box-shadow:inset 0 0 0 1px #eeeaf3}
+.word-bank{height:570px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;display:flex;flex-flow:column nowrap;align-items:stretch;gap:5px;padding:8px;scrollbar-width:thin;scrollbar-color:#9b83c9 #eee9fa;background:#fff;border:1px solid #aaa1b8;border-radius:4px;box-shadow:inset 0 0 0 1px #eeeaf3}
 .word-chip{flex:0 0 auto;width:100%;min-width:0;font:400 .92rem/1.25 system-ui,sans-serif;letter-spacing:.01em;color:var(--ink);background:transparent;border:0;border-bottom:1px solid #eeeaf3;border-radius:0;padding:9px 10px;cursor:grab;touch-action:none;user-select:none;text-align:left}
 
 .word-chip:focus-visible,.answer-slot:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 
-.word-chip.dragging{opacity:.25}
-.glass-pot{position:relative;height:610px;max-width:100%;margin:22px auto 8px;padding:34px 16px 22px;border:3px solid rgba(151,177,194,.72);border-top-width:5px;border-radius:24% 24% 38% 38% / 9% 9% 13% 13%;background:linear-gradient(115deg,rgba(255,255,255,.72),rgba(208,230,241,.38) 35%,rgba(255,255,255,.58) 62%,rgba(190,218,232,.35));box-shadow:inset 10px 0 18px rgba(255,255,255,.75),inset -9px 0 18px rgba(130,165,184,.13),0 12px 22px rgba(66,87,112,.12);backdrop-filter:blur(5px);overflow:hidden}
-.glass-pot:before{content:"";position:absolute;left:12%;right:12%;top:-10px;height:28px;border:3px solid rgba(151,177,194,.78);border-radius:50%;background:linear-gradient(#fff,rgba(215,234,243,.6));box-shadow:0 3px 7px rgba(60,90,110,.12)}
-.glass-pot:after{content:"";position:absolute;left:9px;top:48px;bottom:48px;width:7px;border-radius:50%;background:rgba(255,255,255,.58);filter:blur(2px);pointer-events:none}
-.answer-list{position:relative;z-index:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;height:100%;max-height:none;overflow:auto;padding:4px 8px 12px;scrollbar-width:thin}
-.answer-slot{min-height:58px;border:1px dashed rgba(123,151,169,.62);border-radius:12px;background:rgba(255,255,255,.48);color:var(--muted);padding:7px;text-align:left;display:flex;align-items:center;gap:8px;margin:0;font:400 .83rem system-ui,sans-serif;cursor:pointer}
-.answer-slot .slot-num{font-size:.72rem;opacity:.65;min-width:17px}
-.answer-slot .slot-word{overflow-wrap:anywhere;color:var(--ink)}
-.answer-slot.correct{background:rgba(205,242,215,.88);border:1px solid #55a76b;color:#176b32}
-.answer-slot.correct .slot-word{color:#176b32;font-weight:650}
-.answer-slot.wrong{background:rgba(251,220,220,.9);border:1px solid #d86a6a;color:#a52828}
-.answer-slot.wrong .slot-word{color:#a52828}
+.word-chip.dragging{opacity:.25}\n.word-chip.bounce-back{animation:bounceBack .55s ease}\n@keyframes bounceBack{0%{background:#ffe7a8;transform:translateX(0)}45%{background:#ffe7a8;transform:translateX(12px)}100%{background:transparent;transform:translateX(0)}}\n.word-bank::-webkit-scrollbar{width:12px}.word-bank::-webkit-scrollbar-track{background:#eee9fa;border-radius:10px}.word-bank::-webkit-scrollbar-thumb{background:#9b83c9;border:3px solid #eee9fa;border-radius:10px}.word-bank::-webkit-scrollbar-thumb:hover{background:#765ca8}
+.jar-stage{position:relative;height:610px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:18px}
+.jar-neck{position:absolute;z-index:2;top:0;width:48%;height:38px;border:5px solid rgba(123,159,180,.78);border-bottom:0;border-radius:13px 13px 0 0;background:linear-gradient(90deg,rgba(255,255,255,.9),rgba(194,224,239,.5),rgba(255,255,255,.85));box-shadow:inset 5px 0 8px #fff8}
+.glass-pot{position:relative;z-index:1;margin-top:27px;width:94%;height:555px;overflow:hidden;border:5px solid rgba(128,164,184,.7);border-top:7px solid rgba(128,164,184,.78);border-radius:15% 15% 30% 30% / 8% 8% 18% 18%;background:linear-gradient(100deg,rgba(255,255,255,.82),rgba(204,231,243,.48) 18%,rgba(255,255,255,.3) 40%,rgba(178,211,228,.34) 72%,rgba(255,255,255,.78));box-shadow:inset 15px 0 22px #fff9,inset -13px 0 20px #8eafc322,0 15px 22px rgba(68,91,115,.15);backdrop-filter:blur(3px)}
+.glass-pot:before{content:"";position:absolute;z-index:3;left:-4px;right:-4px;top:-8px;height:24px;border:5px solid rgba(123,159,180,.8);border-radius:50%;background:linear-gradient(#fff,rgba(194,224,239,.75));box-shadow:0 3px 8px #597b9133}
+.jar-shine{position:absolute;z-index:2;left:17px;top:48px;bottom:38px;width:9px;border-radius:50%;background:rgba(255,255,255,.72);filter:blur(2px);pointer-events:none}
+.answer-list{position:absolute;inset:40px 17px 20px;display:flex;align-content:flex-end;align-items:flex-end;justify-content:center;flex-wrap:wrap;gap:7px;overflow-y:auto;overflow-x:hidden;padding:12px 8px 10px;scrollbar-width:thin;scrollbar-color:#8baec1 transparent}
+.jar-chip{position:relative;z-index:1;padding:7px 10px;border:1px solid rgba(78,145,105,.55);border-radius:18px;background:linear-gradient(145deg,rgba(224,255,232,.94),rgba(167,222,184,.82));color:#176b32;font:700 .78rem/1.15 system-ui,sans-serif;box-shadow:0 3px 7px rgba(38,94,56,.12);animation:dropIntoJar .35s ease-out}
+@keyframes dropIntoJar{0%{transform:translateY(-35px) rotate(-8deg);opacity:0}70%{transform:translateY(5px) rotate(3deg)}100%{transform:translateY(0) rotate(0);opacity:1}}
+.jar-base{position:absolute;bottom:0;width:70%;height:18px;border-radius:50%;background:rgba(143,176,194,.28);filter:blur(5px)}
 .game-note{color:var(--muted);font-size:.86rem;margin:12px 2px 0}
 .game-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}
 .game-actions button{margin:0}
@@ -48,7 +46,7 @@
 .game-message{min-height:1.5em;color:var(--muted);font-size:.92rem;margin-top:12px}
 .drag-ghost{position:fixed;z-index:9999;pointer-events:none;padding:10px 15px;background:var(--surface);border:1px solid var(--ink);border-radius:8px;box-shadow:0 8px 24px #0002;font:400 .95rem system-ui,sans-serif;transform:translate(-50%,-50%)}
 
-@media(max-width:720px){.word-game{padding:32px 14px 60px}.game-layout{grid-template-columns:1fr}.word-bank{height:340px;display:flex;flex-flow:column nowrap;overflow-y:auto;overflow-x:hidden}.glass-pot{height:610px;max-width:430px}.answer-list{height:100%;max-height:none;grid-template-columns:repeat(2,minmax(0,1fr))}.game-panel{padding:14px}}
+@media(max-width:720px){.word-game{padding:32px 14px 60px}.game-layout{grid-template-columns:1fr}.word-bank{height:340px;display:flex;flex-flow:column nowrap;overflow-y:auto;overflow-x:hidden}.jar-stage{height:570px}.glass-pot{height:520px;width:94%}.answer-list{inset:38px 14px 18px}.game-panel{padding:14px}}
 @media(prefers-reduced-motion:no-preference){.answer-slot{transition:background .15s,border-color .15s}.word-chip{transition:opacity .15s,border-color .15s}}
 </style>
 </head>
@@ -56,10 +54,10 @@
 <nav class="top" aria-label="Main"><a href="index.html">The Lazy Corner</a><a href="articles.html">Articles</a><a href="word-hunt.html" aria-current="page">Word Hunt</a><a href="about.html">About</a><a href="contact.html">Contact</a></nav>
 <main class="word-game">
   <h1>The Lazy Word Hunt</h1>
-  <p class="game-intro">One thousand words. Thirty real ones. The rest are convincing impostors. Drag a word from the bank on the left and drop it anywhere in the answer area on the right. The words find their own place. No hints. No obvious patterns.</p>
+  <p class="game-intro">Pick words from the list and drop them into the glass jar. Collect all 30 real words. Wrong guesses bounce back into the list.</p>
   <div class="game-stats" aria-live="polite">
     <div class="stat"><strong id="foundCount">0 / 30</strong><span>Real words found</span></div>
-    <div class="stat"><strong id="remainingCount">1,000</strong><span>Words in the bank</span></div>
+    
     <div class="stat"><strong id="wrongCount">0</strong><span>Wrong drops</span></div>
   </div>
   <div class="game-layout">
@@ -68,10 +66,10 @@
       <div class="word-bank" id="wordBank"></div>
       <p class="game-note">Drag the right words into the answer box.</p>
     </section>
-    <section class="game-panel" aria-label="Answer slots">
-      <div class="panel-head"><h2>Glass word pot</h2><small>Collect all 30 real words</small></div>
-      <div class="glass-pot" aria-label="Glass pot for collecting the 30 meaningful words"><div class="answer-list" id="answerList"></div></div>
-      <p class="game-note">Green means you found a real word. Red means it fooled you. Every dropped word lands in a random spot. Wrong guesses can be replaced.</p>
+    <section class="game-panel" aria-label="Glass jar">
+      <div class="panel-head"><h2>Glass jar</h2><small><strong id="jarCount">0 / 30</strong> collected</small></div>
+      <div class="jar-stage"><div class="jar-neck"></div><div class="glass-pot" id="glassPot" aria-label="Glass jar. Drop real words inside to collect them."><div class="jar-shine"></div><div class="answer-list" id="answerList"></div></div><div class="jar-base"></div></div>
+      <p class="game-note">Only real words stay in the jar. Wrong words bounce back to the list.</p>
     </section>
   </div>
   <div class="game-actions">
@@ -94,7 +92,7 @@
   var endings=['bble','dle','fren','gish','lune','mber','nish','phle','rish','sper','tive','vish','zle','nter','lith','mick','dren','flet','glen','mish','phel','rune','sque','thic','vane','wick','zick'];
   var realSet=new Set(answers);
   var fakeSet=new Set();
-  while(fakeSet.size<970){
+  while(fakeSet.size<470){
     var a=onsets[Math.floor(Math.random()*onsets.length)];
     var b=middles[Math.floor(Math.random()*middles.length)];
     var c=endings[Math.floor(Math.random()*endings.length)];
@@ -103,9 +101,9 @@
   }
   var words=Array.from(fakeSet).concat(answers);
   for(var i=words.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=words[i];words[i]=words[j];words[j]=tmp;}
-  var bank=document.getElementById('wordBank'), answerList=document.getElementById('answerList');
-  var foundCount=document.getElementById('foundCount'), remainingCount=document.getElementById('remainingCount'), wrongCount=document.getElementById('wrongCount');
-  var message=document.getElementById('gameMessage'), wrong=0, found=new Set(), used=new Set(), placements=new Array(30).fill(null), ghost=null, activeWord=null, audioCtx=null;
+  var bank=document.getElementById('wordBank'), answerList=document.getElementById('answerList'), glassPot=document.getElementById('glassPot');
+  var foundCount=document.getElementById('foundCount'), jarCount=document.getElementById('jarCount'), wrongCount=document.getElementById('wrongCount');
+  var message=document.getElementById('gameMessage'), wrong=0, found=new Set(), used=new Set(), ghost=null, activeWord=null, audioCtx=null;
   function makeBank(){
     bank.innerHTML='';
     words.forEach(function(word,index){
@@ -119,21 +117,14 @@
         activeWord=word;item.classList.add('dragging');
         ghost=document.createElement('div');ghost.className='drag-ghost';ghost.textContent=word;document.body.appendChild(ghost);moveGhost(e.clientX,e.clientY);
         function move(ev){moveGhost(ev.clientX,ev.clientY);}
-        function end(ev){document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',end);item.classList.remove('dragging');var target=document.elementFromPoint(ev.clientX,ev.clientY);if(target&&answerList.contains(target))place(word);if(ghost){ghost.remove();ghost=null;}}
+        function end(ev){document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',end);item.classList.remove('dragging');var target=document.elementFromPoint(ev.clientX,ev.clientY);if(target&&glassPot.contains(target))place(word);if(ghost){ghost.remove();ghost=null;}}
         document.addEventListener('pointermove',move);document.addEventListener('pointerup',end);
       });
       bank.appendChild(item);
     });
   }
   function moveGhost(x,y){if(ghost){ghost.style.left=x+'px';ghost.style.top=y+'px';}}
-  function makeSlots(){
-    answerList.innerHTML='';
-    for(var i=0;i<30;i++){
-      var slot=document.createElement('button');slot.type='button';slot.className='answer-slot';slot.dataset.slot=i;
-      slot.innerHTML='<span class="slot-num">'+String(i+1).padStart(2,'0')+'</span><span class="slot-word">Waiting for a word</span>';
-      answerList.appendChild(slot);
-    }
-  }
+  function makeSlots(){answerList.innerHTML='';}
   function unlockAudio(){
     try{var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;if(!audioCtx)audioCtx=new AC();if(audioCtx.state==='suspended')audioCtx.resume();}catch(e){}
   }
@@ -162,67 +153,41 @@
           osc.start(now+i*.075);osc.stop(now+i*.075+.44);
         });
       }else{
-        [233.08,246.94,185].forEach(function(freq,i){
-          var osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
-          osc.type='triangle';osc.frequency.value=freq;
-          gain.gain.setValueAtTime(.0001,now+i*.025);
-          gain.gain.exponentialRampToValueAtTime(.075,now+i*.025+.012);
-          gain.gain.exponentialRampToValueAtTime(.0001,now+i*.025+.24);
-          osc.connect(gain);gain.connect(audioCtx.destination);
-          osc.start(now+i*.025);osc.stop(now+i*.025+.26);
-        });
+        var osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.type='sawtooth';
+        osc.frequency.setValueAtTime(190,now);osc.frequency.exponentialRampToValueAtTime(65,now+.32);
+        gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.16,now+.015);gain.gain.exponentialRampToValueAtTime(.0001,now+.38);
+        osc.connect(gain);gain.connect(audioCtx.destination);osc.start(now);osc.stop(now+.4);
       }
     }catch(e){}
   }
-  function randomOpenSlot(){
-    var open=[];
-    placements.forEach(function(p,i){if(!p)open.push(i);});
-    if(open.length)return open[Math.floor(Math.random()*open.length)];
-    var replaceable=[];
-    placements.forEach(function(p,i){if(p&&!p.correct)replaceable.push(i);});
-    if(replaceable.length)return replaceable[Math.floor(Math.random()*replaceable.length)];
-    return -1;
-  }
   function place(word){
-    if(!word||found.has(word)||used.has(word))return;
-    var index=randomOpenSlot();
-    if(index<0){message.textContent='All answer spaces are green. You found every word!';return;}
-    var old=placements[index];
-    if(old&&!old.correct){used.delete(old.word);}
+    if(!word||found.has(word))return;
     var correct=realSet.has(word);
-    placements[index]={word:word,correct:correct};
-    used.add(word);
     if(correct){
-      found.add(word);
-      message.textContent='Lovely. “'+word+'” belongs here.';
+      found.add(word);used.add(word);
+      var chip=document.createElement('span');chip.className='jar-chip';chip.textContent=word;chip.setAttribute('aria-label','Collected word '+word);
+      answerList.appendChild(chip);
+      message.textContent='Lovely! “'+word+'” dropped into the jar.';
     }else{
       wrong++;wrongCount.textContent=wrong;
-      message.textContent='Oof. “'+word+'” is an impostor. It has landed somewhere in the answer list.';
+      message.textContent='BZZT! “'+word+'” is not one of the hidden words. Back to the list!';
+      var item=Array.from(bank.querySelectorAll('.word-chip')).find(function(el){return el.dataset.word===word;});
+      if(item){item.classList.remove('bounce-back');void item.offsetWidth;item.classList.add('bounce-back');}
     }
-    playDropSound(correct);
-    renderSlots();renderBank();updateStats();
-    if(found.size===30){message.textContent='All 30 found. Sink into that victory. You did wonderfully.';}
+    playDropSound(correct);updateStats();
+    if(found.size===30)message.textContent='You collected all 30! The jar is full. Lovely work.';
   }
-  function renderSlots(){
-    Array.from(answerList.children).forEach(function(slot,i){
-      var p=placements[i];slot.classList.remove('correct','wrong');
-      var label=slot.querySelector('.slot-word');
-      if(!p){label.textContent='Waiting for a word';slot.disabled=false;}
-      else{label.textContent=p.word;slot.classList.add(p.correct?'correct':'wrong');slot.disabled=false;}
-    });
-  }
-  function renderBank(){ /* Keep every word visible so the bank never gives away a used answer. */ }
-  function updateStats(){foundCount.textContent=found.size+' / 30';remainingCount.textContent=(1000-found.size).toLocaleString('en-US');}
-  document.getElementById('checkBtn').addEventListener('click',function(){message.textContent=found.size===30?'All 30 found. You win!':found.size+' of 30 found. '+(30-found.size)+' still hiding in the word bank.';});
+  function updateStats(){foundCount.textContent=found.size+' / 30';jarCount.textContent=found.size+' / 30';}
+  document.getElementById('checkBtn').addEventListener('click',function(){message.textContent=found.size===30?'You collected all 30! The jar is full.':'The jar has '+found.size+' of 30 real words. Keep hunting!';});
   document.getElementById('resetBtn').addEventListener('click',function(){
     if(!window.confirm('Start a fresh hunt? Your current answers will be cleared.'))return;
-    wrong=0;found.clear();used.clear();placements=new Array(30).fill(null);activeWord=null;
+    wrong=0;found.clear();used.clear();activeWord=null;
     words=Array.from(fakeSet).concat(answers);for(var i=words.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=words[i];words[i]=words[j];words[j]=t;}
-    wrongCount.textContent='0';message.textContent='A fresh shuffle. Good luck.';makeBank();renderSlots();updateStats();
+    wrongCount.textContent='0';message.textContent='A fresh shuffle. Good luck.';makeBank();makeSlots();updateStats();
   });
-  answerList.addEventListener('dragover',function(e){e.preventDefault();});
-  answerList.addEventListener('drop',function(e){e.preventDefault();var word=e.dataTransfer.getData('text/plain')||activeWord;if(word)place(word);});
-  answerList.addEventListener('click',function(){if(activeWord){place(activeWord);activeWord=null;}});
+  glassPot.addEventListener('dragover',function(e){e.preventDefault();});
+  glassPot.addEventListener('drop',function(e){e.preventDefault();var word=e.dataTransfer.getData('text/plain')||activeWord;if(word)place(word);activeWord=null;});
+  glassPot.addEventListener('click',function(){if(activeWord){place(activeWord);activeWord=null;}});
   makeBank();makeSlots();updateStats();
 })();
 </script>
