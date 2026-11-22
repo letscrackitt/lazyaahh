@@ -34,6 +34,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 .lazy-game-float a{display:block;text-align:center;text-decoration:none;background:var(--butter);color:var(--ink);font-weight:800;border-radius:999px;padding:9px 10px;font-size:.9rem}
 .lazy-game-float a:hover{filter:brightness(.96)}
 @media(max-width:1050px){.lazy-game-float{top:auto;right:12px;bottom:12px;transform:none;width:auto;max-width:calc(100vw - 24px);display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:999px}.lazy-game-float .lazy-game-kicker,.lazy-game-float p{display:none}.lazy-game-float strong{font-size:1rem;margin:0;white-space:nowrap}.lazy-game-float a{padding:8px 13px;white-space:nowrap}}
+
+/* Lazy mood picker */
+.lazy-picker{background:var(--surface);border:2px solid var(--pillow);border-radius:26px;padding:22px;margin-top:18px}
+.lazy-picker-intro{color:var(--muted);margin:6px 0 16px}
+.lazy-moods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.lazy-mood{margin:0;padding:13px 9px;background:var(--bg);border:1px solid var(--pillow);border-radius:17px;font-weight:800;line-height:1.25;min-height:76px}
+.lazy-mood span{display:block;font-size:1.45rem;margin-bottom:5px}
+.lazy-mood[aria-pressed="true"]{background:var(--mint);border-color:var(--ink)}
+.lazy-pick-result{display:none;margin-top:15px;padding:17px;border-radius:18px;background:var(--bg)}
+.lazy-pick-result.show{display:block}
+.lazy-pick-result p{font:600 1.2rem/1.35 "Baloo 2",system-ui,sans-serif;margin:0 0 12px}
+.lazy-pick-result a,.lazy-pick-result button{display:inline-block;margin:0 7px 0 0;padding:9px 15px;border-radius:999px;background:var(--butter);color:var(--ink);text-decoration:none;font-weight:800;font-size:.92rem;border:0}
+.lazy-pick-result .another{background:var(--surface);border:1px solid var(--pillow)}
+@media(max-width:460px){.lazy-moods{grid-template-columns:repeat(2,minmax(0,1fr))}.lazy-picker{padding:17px}}
 </style>
 
 <script type="application/ld+json">
@@ -79,6 +93,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <div>
         <div>tasks postponed</div>
         <button id="tmrBtn" type="button">I’ll do it tomorrow</button>
+      </div>
+    </div>
+  </section>
+
+
+  <section id="lazy-mood">
+    <h2>What kind of lazy are you today?</h2>
+    <div class="lazy-picker">
+      <p class="lazy-picker-intro">No plans. No pressure. Pick your current mood and we’ll give you one tiny thing to do.</p>
+      <div class="lazy-moods" role="group" aria-label="Choose your lazy mood">
+        <button class="lazy-mood" type="button" data-mood="brain"><span>🫠</span>Brain switched off</button>
+        <button class="lazy-mood" type="button" data-mood="sound"><span>🎧</span>Just give me sounds</button>
+        <button class="lazy-mood" type="button" data-mood="fun"><span>🎮</span>Need tiny fun</button>
+        <button class="lazy-mood" type="button" data-mood="hands"><span>🖍️</span>Keep my hands busy</button>
+        <button class="lazy-mood" type="button" data-mood="social"><span>💬</span>People, but low effort</button>
+        <button class="lazy-mood" type="button" data-mood="sleep"><span>😴</span>Ready to disappear</button>
+      </div>
+      <div class="lazy-pick-result" id="lazyPickResult" aria-live="polite">
+        <p id="lazyPickText"></p>
+        <div id="lazyPickAction"></div>
       </div>
     </div>
   </section>
@@ -156,6 +190,52 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   var tmr=0, tmrEl=document.getElementById('tmrN');
   document.getElementById('tmrBtn').addEventListener('click',function(){tmr++;tmrEl.textContent=tmr});
+
+  var lazyPicks={
+    brain:[
+      {text:'Put on a comfort show or a familiar YouTube video. Choose something you don’t have to concentrate on.',label:'Find something to watch',url:'https://www.youtube.com/results?search_query=comfort+watch+videos'},
+      {text:'Give yourself a guilt-free 10-minute scroll. Set a tiny boundary so one video doesn’t become three hours.',label:'Open YouTube Shorts',url:'https://www.youtube.com/shorts'},
+      {text:'Watch tiny animals being ridiculous. It is a perfectly valid use of a break.',label:'Watch animal videos',url:'https://www.youtube.com/results?search_query=funny+animal+videos'}
+    ],
+    sound:[
+      {text:'Put on a playlist and lie down. No need to skip every song; let it run.',label:'Find a chill playlist',url:'https://www.youtube.com/results?search_query=chill+playlist'},
+      {text:'Try a low-stakes podcast or audiobook while you stare at the ceiling.',label:'Find a podcast',url:'https://www.youtube.com/results?search_query=light+fun+podcast'},
+      {text:'Let rain, café chatter or soft background noise fill the room.',label:'Play rain sounds',url:'https://www.youtube.com/results?search_query=rain+sounds+for+relaxing'}
+    ],
+    fun:[
+      {text:'Pop random things until your brain gets its tiny moment of joy.',label:'Play Pop & Relax',url:'pop-relax.html'},
+      {text:'Hunt for hidden words. It’s a tiny challenge with absolutely no consequences.',label:'Play Word Hunt',url:'word-hunt.html'}
+    ],
+    hands:[
+      {text:'Doodle the same tiny shape all over a page. It does not need to become art.'},
+      {text:'Colour something while listening to music. Even a pen and the back of an old envelope will do.'},
+      {text:'Make a tiny paper thing, fold a few clothes, or sort one small pile. Stop whenever it stops being relaxing.'},
+      {text:'Try a simple word search, jigsaw or a few rounds of a puzzle. No streaks, no pressure.'}
+    ],
+    social:[
+      {text:'Send someone a meme with no explanation. Let the meme do the talking.'},
+      {text:'Send a 20-second voice note to someone you like. It doesn’t need to become a full conversation.'},
+      {text:'Ask a friend what they’re eating or watching right now. Low-effort conversation starter.'}
+    ],
+    sleep:[
+      {text:'If you’re sleepy, try a short 15–20 minute nap. Keep it gentle and set an alarm.',label:'Open Nap Mode',action:'nap'},
+      {text:'Do absolutely nothing for one minute. Unclench your jaw, drop your shoulders and let the room be quiet.',label:'Start doing nothing',action:'still'}
+    ]
+  };
+  var moodButtons=document.querySelectorAll('.lazy-mood'),pickBox=document.getElementById('lazyPickResult'),pickText=document.getElementById('lazyPickText'),pickAction=document.getElementById('lazyPickAction'),activeMood='';
+  function showLazyPick(mood){
+    activeMood=mood;
+    moodButtons.forEach(function(b){b.setAttribute('aria-pressed',b.dataset.mood===mood?'true':'false')});
+    var options=lazyPicks[mood],choice=options[Math.floor(Math.random()*options.length)];
+    pickText.textContent=choice.text;pickAction.innerHTML='';
+    if(choice.url){var a=document.createElement('a');a.href=choice.url;a.textContent=choice.label;a.target='_blank';a.rel='noopener';if(choice.url.indexOf('.html')>-1){a.removeAttribute('target');a.removeAttribute('rel')}pickAction.appendChild(a)}
+    if(choice.action==='nap'){var b=document.createElement('button');b.type='button';b.textContent=choice.label;b.addEventListener('click',function(){document.getElementById('napBtn').click()});pickAction.appendChild(b)}
+    if(choice.action==='still'){var b2=document.createElement('button');b2.type='button';b2.textContent=choice.label;b2.addEventListener('click',function(){document.getElementById('timer').scrollIntoView({behavior:'smooth',block:'center'});document.getElementById('status').textContent='One quiet minute. You do not have to do anything.';});pickAction.appendChild(b2)}
+    var again=document.createElement('button');again.type='button';again.className='another';again.textContent='Give me another idea';again.addEventListener('click',function(){showLazyPick(mood)});pickAction.appendChild(again);
+    pickBox.classList.add('show');
+  }
+  moodButtons.forEach(function(b){b.setAttribute('aria-pressed','false');b.addEventListener('click',function(){showLazyPick(b.dataset.mood)})});
+
 })();
 </script>
 </body>
